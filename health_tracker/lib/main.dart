@@ -1,7 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/screens/welcome_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  var value = await FirebaseFirestore.instance
+      .collection('data')
+      .doc("6EMrJxnGNLt060sdypg2")
+      .get();
+
+  print(value.toString());
+
   runApp(const MaterialApp(
       debugShowCheckedModeBanner: false, home: WelcomePage()));
 }
