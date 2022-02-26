@@ -33,7 +33,7 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                   ),
                   Text(kName, style: kHeader.copyWith(fontSize: 50)),
                   const SizedBox(
-                    height: 20,
+                    height: 50,
                   ),
                   ListView.builder(
                     shrinkWrap: true,
