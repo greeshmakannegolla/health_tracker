@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/string_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/screens/tracker_listing_screen.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -31,15 +32,11 @@ class WelcomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
           child: FloatingActionButton(
             elevation: 0,
-            onPressed: () async {
-              // await Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => AddIncome(
-              //             this.widget.property,
-              //             this.widget.propertyUnit,
-              //             this._refreshIncomeList,
-              //             propertyDetail: _propertyDetail)));
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TrackerListingScreen()));
             },
             backgroundColor: ColorConstants.kTextPrimaryColor,
             child: const Icon(

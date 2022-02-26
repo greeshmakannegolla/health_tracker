@@ -7,3 +7,10 @@ const kHeader = TextStyle(
   color: ColorConstants.kTextPrimaryColor,
   fontSize: 41,
 );
+
+const kSubText = TextStyle(
+  fontFamily: "Sen",
+  fontWeight: FontWeight.w600,
+  color: ColorConstants.kTextPrimaryColor,
+  fontSize: 21,
+);
