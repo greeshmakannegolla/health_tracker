@@ -7,13 +7,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  var value = await FirebaseFirestore.instance
-      .collection('data')
-      .doc("6EMrJxnGNLt060sdypg2")
-      .get();
-
-  print(value.toString());
-
   runApp(const MaterialApp(
       debugShowCheckedModeBanner: false, home: WelcomePage()));
 }

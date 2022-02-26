@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
@@ -13,13 +14,13 @@ class AddEditForm extends StatefulWidget {
 
 class _AddEditFormState extends State<AddEditForm> {
   late TextEditingController _dateController;
-  late DateTime _paymentDate;
+  late DateTime _entryDate;
   late TextEditingController _valueController;
 
   @override
   void initState() {
     super.initState();
-    _paymentDate = DateTime.now();
+    _entryDate = DateTime.now();
     _dateController = TextEditingController(
         text: DateFormat(' d MMM, ' 'yy').format(DateTime.now()));
     _valueController = TextEditingController();
@@ -78,7 +79,7 @@ class _AddEditFormState extends State<AddEditForm> {
                         var date = await showRoundedDatePicker(
                           height: 300,
                           context: context,
-                          initialDate: _paymentDate,
+                          initialDate: _entryDate,
                           firstDate:
                               today.subtract(const Duration(days: 365 * 5)),
                           lastDate: today.add(const Duration(days: 365 * 3)),
@@ -100,8 +101,8 @@ class _AddEditFormState extends State<AddEditForm> {
                           return;
                         }
 
-                        _paymentDate = date;
-                        var local = _paymentDate.toLocal();
+                        _entryDate = date;
+                        var local = _entryDate.toLocal();
 
                         _dateController.text =
                             DateFormat(' d MMM, ' 'yy').format(local);
@@ -173,7 +174,16 @@ class _AddEditFormState extends State<AddEditForm> {
             ),
           ),
           onPressed: () async {
-            //TODO: Submit to database
+            var currentData = {
+              "date": Timestamp.fromDate(_entryDate),
+              "value": _valueController.text
+            };
+
+            await FirebaseFirestore.instance
+                .collection('bp_data')
+                .doc()
+                .set(currentData);
+            Navigator.pop(context);
           },
         ),
       )),
