@@ -33,7 +33,30 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                   ),
                   Text(kName, style: kHeader.copyWith(fontSize: 50)),
                   const SizedBox(
-                    height: 50,
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                                ColorConstants.kActionButtonColor)),
+                        child: Text(
+                          '+ Link new tracker',
+                          style: kData.copyWith(
+                              color: ColorConstants.kAppBackgroundColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
                   ),
                   ListView.builder(
                     shrinkWrap: true,

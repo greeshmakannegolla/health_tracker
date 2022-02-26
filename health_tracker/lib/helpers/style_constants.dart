@@ -26,5 +26,5 @@ const kData = TextStyle(
   fontFamily: "Sen",
   fontWeight: FontWeight.w400,
   color: ColorConstants.kTextPrimaryColor,
-  fontSize: 16,
+  fontSize: 17,
 );

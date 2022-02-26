@@ -86,11 +86,10 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 book['date'],
               )),
               DataCell(
-                Text(
-                  book['bp'],
-                ),
-                // showEditIcon: true
-              ),
+                  Text(
+                    book['bp'],
+                  ),
+                  showEditIcon: true),
             ]))
         .toList();
   }
