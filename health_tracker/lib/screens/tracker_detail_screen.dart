@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/screens/value_entry_form.dart';
 
 class TrackerDetailScreen extends StatefulWidget {
   const TrackerDetailScreen({Key? key}) : super(key: key);
@@ -24,6 +25,25 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+            child: FloatingActionButton(
+              elevation: 0,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const AddEditForm())); //TODO: Navigate to form
+              },
+              backgroundColor: ColorConstants.kActionButtonColor,
+              child: const Icon(
+                Icons.add_rounded,
+                size: 40,
+                color: ColorConstants.kAppBackgroundColor,
+              ),
+            ),
+          ),
           backgroundColor: ColorConstants.kAppBackgroundColor,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
