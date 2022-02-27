@@ -1,12 +1,13 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/mock_data/mock_tracker_data.dart';
 import 'package:health_tracker/screens/tracker_detail_screen.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 class HealthTrackerCard extends StatefulWidget {
-  const HealthTrackerCard({Key? key}) : super(key: key);
+  final MockTracker mockTracker;
+  const HealthTrackerCard(this.mockTracker, {Key? key}) : super(key: key);
 
   @override
   _HealthTrackerCardState createState() => _HealthTrackerCardState();
@@ -19,7 +20,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
     return InkWell(
       onTap: () async {
         await _analytics.logEvent(name: 'tracker_detail', parameters: {
-          'view_card': 1, //TODO: Send selected card index
+          'view_card': widget.mockTracker.id,
         });
         await Navigator.push(
             context,
@@ -27,7 +28,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                 builder: (context) => const TrackerDetailScreen()));
       },
       child: Card(
-        color: ColorConstants.kBloodPressureColor.withOpacity(0.1),
+        color: widget.mockTracker.color.withOpacity(0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
@@ -37,48 +38,55 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.favorite_border_rounded,
-                        color: ColorConstants.kBloodPressureColor,
-                      ),
-                      //TODO:Get icon, color from prev screen
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        "Blood Pressure",
-                        style: kSubText.copyWith(
-                          color: ColorConstants.kBloodPressureColor,
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          widget.mockTracker.iconPath,
+                          color: widget.mockTracker.color,
+                          height: 25,
+                          width: 25,
                         ),
-                      ) //TODO:Get from prev screen
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("120/80", //TODO: Get latest entry
-                      style: kSubText.copyWith(
-                          color: ColorConstants.kBloodPressureColor,
-                          fontSize: 40))
-                ],
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          widget.mockTracker.displayName,
+                          style: kSubText.copyWith(
+                            color: widget.mockTracker.color,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                        "120/80 " + //TODO: Get latest entry
+                            widget.mockTracker.unit,
+                        style: kSubText.copyWith(
+                            color: widget.mockTracker.color, fontSize: 35))
+                  ],
+                ),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddEditForm()));
-                },
-                child: const Icon(
-                  Icons.add_circle_rounded,
-                  size: 50,
-                  color: ColorConstants
-                      .kBloodPressureColor, //TODO:Get from prev screen
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddEditForm()));
+                  },
+                  child: Icon(
+                    Icons.add_circle_rounded,
+                    size: 50,
+                    color: widget.mockTracker.color,
+                  ),
                 ),
               )
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/string_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/mock_data/mock_tracker_data.dart';
 import 'package:health_tracker/reusable_widgets/health_tracker_card.dart';
 
 class TrackerListingScreen extends StatefulWidget {
@@ -61,26 +62,14 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
-                    itemCount: 1, //TODO: Change later
+                    itemCount: MockTrackerList.mockTrackers.length,
                     itemBuilder: (BuildContext ctx, int index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 12),
-                        child: InkWell(
-                            onTap: () {
-                              //Navigation to the selected health tracker
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) =>
-                              //           RestaurantDetailScreen(
-                              //               _filteredRestaurantList[index])),
-                              // );
-                            },
-                            child: const HealthTrackerCard(
-                                // _filteredRestaurantList[index],
-                                // key: UniqueKey(), //TODO: Send correct data
-                                )),
+                        child: HealthTrackerCard(
+                          MockTrackerList.mockTrackers[index],
+                        ),
                       );
                     },
                   ),

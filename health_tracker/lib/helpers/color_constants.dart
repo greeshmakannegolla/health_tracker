@@ -6,6 +6,6 @@ class ColorConstants {
   static const kAppBackgroundColor = Colors.white;
   static const kActionButtonColor = Colors.orange;
   static const kBloodPressureColor = Color(0xFFbf2158);
-  static const kExerciseColor = Color(0xFFab26d4);
+  static const kExerciseColor = Color(0xFF30ab5b);
   static const kWeightColor = Color(0xFF2c94d4);
 }

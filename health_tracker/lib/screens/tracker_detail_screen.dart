@@ -4,6 +4,7 @@ import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
+import 'package:intl/intl.dart';
 
 class TrackerDetailScreen extends StatefulWidget {
   const TrackerDetailScreen({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class TrackerDetailScreen extends StatefulWidget {
 class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     listenToData();
   }
@@ -91,7 +91,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
       DataColumn(
           label: Expanded(
         child: Text(
-          'Blood Pressure \n(in mm Hg)', //TODO: Change from db, check UI issue
+          'Blood Pressure \n(in mm Hg)', //TODO: Change from db
           style: kSubHeader.copyWith(fontSize: 20),
         ),
       )),
@@ -102,7 +102,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
     return entries.trackerDataList
         .map((entry) => DataRow(cells: [
               DataCell(Text(
-                entry.date.toString(), //TODO:Format
+                DateFormat("dd MMM, yyyy").format(entry.date),
                 textAlign: TextAlign.center,
                 style: kSubHeader.copyWith(fontWeight: FontWeight.w400),
               )),
