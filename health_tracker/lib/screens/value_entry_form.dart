@@ -133,8 +133,11 @@ class _AddEditFormState extends State<AddEditForm> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    "BLOOD PRESSURE", //TODO: Populate acc. to data
+                  Text(
+                    widget.mockTracker.displayName.toUpperCase() +
+                        " (in " +
+                        widget.mockTracker.unit +
+                        ")",
                     style: kSubHeader,
                   ),
                   const SizedBox(
@@ -183,7 +186,7 @@ class _AddEditFormState extends State<AddEditForm> {
             };
 
             await FirebaseFirestore.instance
-                .collection('bp_data')
+                .collection(widget.mockTracker.id)
                 .doc()
                 .set(currentData);
             Navigator.pop(context);
