@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/screens/tracker_detail_screen.dart';
+import 'package:health_tracker/screens/value_entry_form.dart';
 
 class HealthTrackerCard extends StatefulWidget {
   const HealthTrackerCard({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        //TODO: redirect to detail screen
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -56,14 +56,19 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                   const SizedBox(
                     height: 12,
                   ),
-                  Text("120/80",
+                  Text("120/80", //TODO: Get latest entry
                       style: kSubText.copyWith(
                           color: ColorConstants.kBloodPressureColor,
                           fontSize: 40))
                 ],
               ),
               InkWell(
-                onTap: () {}, //TODO: Open form to add data
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddEditForm()));
+                },
                 child: const Icon(
                   Icons.add_circle_rounded,
                   size: 50,

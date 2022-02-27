@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
 
 class TrackerDetailScreen extends StatefulWidget {
@@ -11,16 +13,14 @@ class TrackerDetailScreen extends StatefulWidget {
 }
 
 class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
-  final List<Map> _books = [
-    {'date': '20/2', 'bp': '150/90'},
-    {'date': "21/2", 'bp': '150/94'},
-    {'date': "22/2", 'bp': '140/90'},
-    {'date': "23/2", 'bp': '156/90'},
-    {'date': "24/2", 'bp': '120/80'},
-    {'date': "25/2", 'bp': '140/97'},
-    {'date': "26/2", 'bp': '120/90'},
-    {'date': "27/2", 'bp': '150/80'},
-  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listenToData();
+  }
+
+  TrackerDataListModel _entries = TrackerDataListModel();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,8 +33,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            const AddEditForm())); //TODO: Navigate to form
+                        builder: (context) => const AddEditForm()));
               },
               backgroundColor: ColorConstants.kActionButtonColor,
               child: const Icon(
@@ -79,38 +78,56 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   }
 
   DataTable _createDataTable() {
-    return DataTable(columns: _createColumns(), rows: _createRows());
+    return DataTable(columns: _createColumns(), rows: _createRows(_entries));
   }
 
   List<DataColumn> _createColumns() {
-    return const [
+    return [
       DataColumn(
           label: Text(
         'Date',
-        style: kSubHeader,
+        style: kSubHeader.copyWith(fontSize: 20),
       )),
       DataColumn(
           label: Expanded(
         child: Text(
-          'Blood Pressure (in mm Hg)',
-          style: kSubHeader,
+          'Blood Pressure \n(in mm Hg)', //TODO: Change from db, check UI issue
+          style: kSubHeader.copyWith(fontSize: 20),
         ),
       )),
-    ]; //TODO: Sort function can be implemented here
+    ];
   }
 
-  List<DataRow> _createRows() {
-    return _books
-        .map((book) => DataRow(cells: [
+  List<DataRow> _createRows(TrackerDataListModel entries) {
+    return entries.trackerDataList
+        .map((entry) => DataRow(cells: [
               DataCell(Text(
-                book['date'],
+                entry.date.toString(), //TODO:Format
+                textAlign: TextAlign.center,
+                style: kSubHeader.copyWith(fontWeight: FontWeight.w400),
               )),
               DataCell(
                   Text(
-                    book['bp'],
+                    entry.value,
+                    textAlign: TextAlign.center,
+                    style: kSubHeader.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   showEditIcon: true),
             ]))
         .toList();
+  }
+
+  Future<void> listenToData() async {
+    FirebaseFirestore.instance
+        .collection('bp_data') //TODO: Need to change collection name acc.
+        .snapshots()
+        .listen((event) {
+      _entries = TrackerDataListModel.fromSnapshotList(event.docs);
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 }

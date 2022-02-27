@@ -22,7 +22,8 @@ class _AddEditFormState extends State<AddEditForm> {
     super.initState();
     _entryDate = DateTime.now();
     _dateController = TextEditingController(
-        text: DateFormat(' d MMM, ' 'yy').format(DateTime.now()));
+        text: DateFormat(' d MMM, ' 'yy')
+            .format(DateTime.now())); //TODO: Needs to change for edit
     _valueController = TextEditingController();
   }
 
