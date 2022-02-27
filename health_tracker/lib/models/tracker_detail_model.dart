@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TrackerDataModel {
+  String id = '';
   DateTime date = DateTime.now();
   String value = '';
 
   TrackerDataModel() {
+    id = '';
     date = DateTime.now();
     value = '';
   }
@@ -14,6 +16,7 @@ class TrackerDataModel {
     var timestamp = json['date'] as Timestamp;
 
     date = timestamp.toDate();
+    id = snapshot.id;
     value = json['value'];
   }
 

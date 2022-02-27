@@ -3,6 +3,7 @@ import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/screens/tracker_detail_screen.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class HealthTrackerCard extends StatefulWidget {
   const HealthTrackerCard({Key? key}) : super(key: key);
@@ -12,11 +13,15 @@ class HealthTrackerCard extends StatefulWidget {
 }
 
 class _HealthTrackerCardState extends State<HealthTrackerCard> {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await _analytics.logEvent(name: 'tracker_detail', parameters: {
+          'view_card': 1, //TODO: Send selected card index
+        });
+        await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const TrackerDetailScreen()));
