@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/mock_data/mock_tracker_data.dart';
 import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
 import 'package:intl/intl.dart';
 
 class TrackerDetailScreen extends StatefulWidget {
-  const TrackerDetailScreen({Key? key}) : super(key: key);
+  final MockTracker mockTracker;
+
+  const TrackerDetailScreen(this.mockTracker, {Key? key}) : super(key: key);
 
   @override
   _TrackerDetailScreenState createState() => _TrackerDetailScreenState();
@@ -33,7 +36,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AddEditForm()));
+                        builder: (context) => AddEditForm(widget.mockTracker)));
               },
               backgroundColor: ColorConstants.kActionButtonColor,
               child: const Icon(
@@ -66,10 +69,11 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 height: 30,
               ),
               Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  children: [_createDataTable()],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: _createDataTable()),
                 ),
               )
             ],
@@ -91,7 +95,11 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
       DataColumn(
           label: Expanded(
         child: Text(
-          'Blood Pressure \n(in mm Hg)', //TODO: Change from db
+          widget.mockTracker.displayName +
+              // \n //TODO:Check
+              " (in " +
+              widget.mockTracker.unit +
+              ")",
           style: kSubHeader.copyWith(fontSize: 20),
         ),
       )),
@@ -104,7 +112,8 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
               DataCell(Text(
                 DateFormat("dd MMM, yyyy").format(entry.date),
                 textAlign: TextAlign.center,
-                style: kSubHeader.copyWith(fontWeight: FontWeight.w400),
+                style: kSubHeader.copyWith(
+                    fontWeight: FontWeight.w400), //TODO: Check UI in BP
               )),
               DataCell(
                   Text(
@@ -121,7 +130,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
 
   Future<void> listenToData() async {
     FirebaseFirestore.instance
-        .collection('bp_data') //TODO: Need to change collection name acc.
+        .collection(widget.mockTracker.id)
         .snapshots()
         .listen((event) {
       _entries = TrackerDataListModel.fromSnapshotList(event.docs);

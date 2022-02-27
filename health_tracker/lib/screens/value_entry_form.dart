@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
+import 'package:health_tracker/mock_data/mock_tracker_data.dart';
 import 'package:intl/intl.dart';
 
 class AddEditForm extends StatefulWidget {
-  const AddEditForm({Key? key}) : super(key: key);
+  final MockTracker mockTracker;
+  const AddEditForm(this.mockTracker, {Key? key}) : super(key: key);
 
   @override
   _AddEditFormState createState() => _AddEditFormState();

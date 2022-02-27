@@ -25,7 +25,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
         await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const TrackerDetailScreen()));
+                builder: (context) => TrackerDetailScreen(widget.mockTracker)));
       },
       child: Card(
         color: widget.mockTracker.color.withOpacity(0.1),
@@ -80,7 +80,8 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const AddEditForm()));
+                            builder: (context) =>
+                                AddEditForm(widget.mockTracker)));
                   },
                   child: Icon(
                     Icons.add_circle_rounded,
