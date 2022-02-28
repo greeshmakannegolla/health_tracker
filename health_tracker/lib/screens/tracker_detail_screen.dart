@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
@@ -17,6 +18,7 @@ class TrackerDetailScreen extends StatefulWidget {
 }
 
 class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
     super.initState();
@@ -32,7 +34,10 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
             child: FloatingActionButton(
               elevation: 0,
-              onPressed: () {
+              onPressed: () async {
+                await _analytics.logEvent(name: 'add_from_detail', parameters: {
+                  'add_form': widget.mockTracker.id,
+                });
                 Navigator.push(
                     context,
                     MaterialPageRoute(

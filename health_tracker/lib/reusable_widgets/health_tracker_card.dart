@@ -76,7 +76,11 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
               Expanded(
                 flex: 1,
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    await _analytics
+                        .logEvent(name: 'add_data_from_home', parameters: {
+                      'add_data': widget.mockTracker.id,
+                    });
                     Navigator.push(
                         context,
                         MaterialPageRoute(

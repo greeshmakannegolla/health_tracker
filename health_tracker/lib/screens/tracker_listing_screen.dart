@@ -55,7 +55,9 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                               color: ColorConstants.kAppBackgroundColor,
                               fontWeight: FontWeight.w600),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          //To add a new tracker, implement
+                        },
                       ),
                     ],
                   ),

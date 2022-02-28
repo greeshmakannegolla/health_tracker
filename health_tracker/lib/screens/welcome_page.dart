@@ -32,7 +32,7 @@ class WelcomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
           child: FloatingActionButton(
             elevation: 0,
-            onPressed: () {
+            onPressed: () async {
               Navigator.push(
                   context,
                   MaterialPageRoute(
