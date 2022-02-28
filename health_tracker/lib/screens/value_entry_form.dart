@@ -22,24 +22,22 @@ class _AddEditFormState extends State<AddEditForm> {
   late DateTime _entryDate;
   late TextEditingController _valueController;
   bool _isEdit = false;
-  TrackerDataModel? _trackerModel;
+  TrackerDataModel _trackerModel = TrackerDataModel();
 
   @override
   void initState() {
     super.initState();
     if (widget.editModel != null) {
       _isEdit = true;
-      _trackerModel = widget.editModel;
-    } else {
-      _trackerModel = TrackerDataModel();
+      _trackerModel = widget.editModel!;
     }
 
-    _entryDate = _isEdit ? _trackerModel!.date : DateTime.now();
+    _entryDate = _isEdit ? _trackerModel.date : DateTime.now();
     _dateController = TextEditingController(
         text: DateFormat(' d MMM, ' 'yy')
-            .format(_isEdit ? _trackerModel!.date : DateTime.now()));
+            .format(_isEdit ? _trackerModel.date : DateTime.now()));
     _valueController =
-        TextEditingController(text: _isEdit ? _trackerModel!.value : '');
+        TextEditingController(text: _isEdit ? _trackerModel.value : '');
   }
 
   @override
@@ -170,20 +168,18 @@ class _AddEditFormState extends State<AddEditForm> {
         ),
       ),
       onPressed: () async {
-        var currentData = {
-          "date": Timestamp.fromDate(_entryDate),
-          "value": _valueController.text
-        };
+        _trackerModel.date = _entryDate;
+        _trackerModel.value = _valueController.text;
 
         _isEdit
             ? await FirebaseFirestore.instance
                 .collection(widget.mockTracker.id)
-                .doc(_trackerModel!.id)
-                .update(currentData)
+                .doc(_trackerModel.id)
+                .update(_trackerModel.toJSON())
             : await FirebaseFirestore.instance
                 .collection(widget.mockTracker.id)
                 .doc()
-                .set(currentData);
+                .set(_trackerModel.toJSON());
         Navigator.pop(context);
       },
     );
