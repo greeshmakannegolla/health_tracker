@@ -22,7 +22,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
         await _analytics.logEvent(name: 'tracker_detail', parameters: {
           'view_card': widget.mockTracker.id,
         });
-        await Navigator.push(
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => TrackerDetailScreen(widget.mockTracker)));
@@ -66,7 +66,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                       height: 12,
                     ),
                     Text(
-                        "76 " + //TODO: Get latest entry
+                        "76 " + //TODO: Get latest entry Provider
                             widget.mockTracker.unit,
                         style: kSubText.copyWith(
                             color: widget.mockTracker.color, fontSize: 35))

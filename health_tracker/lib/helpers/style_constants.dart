@@ -28,3 +28,6 @@ const kData = TextStyle(
   color: ColorConstants.kTextPrimaryColor,
   fontSize: 17,
 );
+
+const kCalendarMonthStyle = TextStyle(
+    fontFamily: "Sen", fontSize: 15, color: ColorConstants.kTextPrimaryColor);

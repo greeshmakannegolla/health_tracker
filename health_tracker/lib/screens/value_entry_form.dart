@@ -85,72 +85,7 @@ class _AddEditFormState extends State<AddEditForm> {
                   const SizedBox(
                     height: 14,
                   ),
-                  TextField(
-                      style: kData,
-                      controller: _dateController,
-                      readOnly: _isEdit ? true : false,
-                      onTap: () async {
-                        if (_isEdit == false) {
-                          DateTime today = DateTime.now();
-                          FocusScope.of(context).unfocus();
-                          await Future.delayed(
-                              const Duration(milliseconds: 100));
-                          var date = await showRoundedDatePicker(
-                            height: 300,
-                            context: context,
-                            initialDate: _entryDate,
-                            firstDate:
-                                today.subtract(const Duration(days: 365 * 5)),
-                            lastDate: today.add(const Duration(days: 365 * 3)),
-                            borderRadius: 16,
-                            styleDatePicker: MaterialRoundedDatePickerStyle(
-                                paddingMonthHeader: const EdgeInsets.all(12),
-                                textStyleMonthYearHeader: TextStyle(
-                                    fontFamily: "Sen",
-                                    fontSize: 15,
-                                    color: ColorConstants.kTextPrimaryColor
-                                        .withOpacity(0.8))),
-                            theme: ThemeData(
-                              primarySwatch: Colors.orange,
-                              // ignore: deprecated_member_use
-                              accentColor: ColorConstants.kActionButtonColor,
-                            ),
-                          );
-                          if (date == null) {
-                            return;
-                          }
-
-                          _entryDate = date;
-                          var local = _entryDate.toLocal();
-
-                          _dateController.text =
-                              DateFormat(' d MMM, ' 'yy').format(local);
-
-                          setState(() {});
-                        } else {
-                          null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                          filled: _isEdit ? true : false,
-                          fillColor: _isEdit
-                              ? ColorConstants.kSecondaryTextColor
-                                  .withOpacity(0.15)
-                              : ColorConstants.kAppBackgroundColor,
-                          suffixIcon: _isEdit
-                              ? null
-                              : const Icon(
-                                  Icons.calendar_today_rounded,
-                                  color: ColorConstants.kActionButtonColor,
-                                  size: 24,
-                                ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                const BorderSide(color: Colors.grey, width: 1),
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 8))),
+                  _getDateField(),
                 ],
               ),
               const SizedBox(
@@ -169,61 +104,125 @@ class _AddEditFormState extends State<AddEditForm> {
                   const SizedBox(
                     height: 14,
                   ),
-                  TextField(
-                      style: kData,
-                      controller: _valueController,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                const BorderSide(color: Colors.grey, width: 1),
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 8))),
+                  _getValueField(),
                 ],
               )
             ],
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: TextButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(ColorConstants.kActionButtonColor),
-              fixedSize: MaterialStateProperty.all(
-                  Size(MediaQuery.of(context).size.width * 0.95, 55)),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              )),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 3),
-            child: Text(
-              _isEdit ? "SAVE" : "ADD",
-              style: kSubHeader.copyWith(
-                  color: ColorConstants.kAppBackgroundColor),
-            ),
-          ),
-          onPressed: () async {
-            var currentData = {
-              "date": Timestamp.fromDate(_entryDate),
-              "value": _valueController.text
-            };
-
-            _isEdit
-                ? await FirebaseFirestore.instance
-                    .collection(widget.mockTracker.id)
-                    .doc(_trackerModel!.id)
-                    .update(currentData)
-                : await FirebaseFirestore.instance
-                    .collection(widget.mockTracker.id)
-                    .doc()
-                    .set(currentData);
-            Navigator.pop(context);
-          },
-        ),
+        floatingActionButton: _getFAB(),
       )),
     );
+  }
+
+  void _calendarOnTap() async {
+    if (_isEdit == false) {
+      DateTime today = DateTime.now();
+      FocusScope.of(context).unfocus();
+      await Future.delayed(const Duration(milliseconds: 100));
+      var date = await showRoundedDatePicker(
+        height: 300,
+        context: context,
+        initialDate: _entryDate,
+        firstDate: today.subtract(const Duration(days: 365 * 5)),
+        lastDate: today.add(const Duration(days: 365 * 3)),
+        borderRadius: 16,
+        styleDatePicker: MaterialRoundedDatePickerStyle(
+            paddingMonthHeader: const EdgeInsets.all(12),
+            textStyleMonthYearHeader: kCalendarMonthStyle),
+        theme: ThemeData(
+          primarySwatch: ColorConstants.kActionButtonColor,
+          // ignore: deprecated_member_use
+          accentColor: ColorConstants.kActionButtonColor,
+        ),
+      );
+      if (date == null) {
+        return;
+      }
+
+      _entryDate = date;
+      var local = _entryDate.toLocal();
+
+      _dateController.text = DateFormat(' d MMM, ' 'yy').format(local);
+
+      setState(() {});
+    }
+  }
+
+  _getFAB() {
+    return TextButton(
+      style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(ColorConstants.kActionButtonColor),
+          fixedSize: MaterialStateProperty.all(
+              Size(MediaQuery.of(context).size.width * 0.95, 55)),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          )),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 3),
+        child: Text(
+          _isEdit ? "SAVE" : "ADD",
+          style: kSubHeader.copyWith(color: ColorConstants.kAppBackgroundColor),
+        ),
+      ),
+      onPressed: () async {
+        var currentData = {
+          "date": Timestamp.fromDate(_entryDate),
+          "value": _valueController.text
+        };
+
+        _isEdit
+            ? await FirebaseFirestore.instance
+                .collection(widget.mockTracker.id)
+                .doc(_trackerModel!.id)
+                .update(currentData)
+            : await FirebaseFirestore.instance
+                .collection(widget.mockTracker.id)
+                .doc()
+                .set(currentData);
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  _getDateField() {
+    return TextField(
+        style: kData,
+        controller: _dateController,
+        readOnly: true,
+        onTap: _calendarOnTap,
+        decoration: InputDecoration(
+            filled: _isEdit ? true : false,
+            fillColor: _isEdit
+                ? ColorConstants.kSecondaryTextColor.withOpacity(0.15)
+                : ColorConstants.kAppBackgroundColor,
+            suffixIcon: _isEdit
+                ? null
+                : const Icon(
+                    Icons.calendar_today_rounded,
+                    color: ColorConstants.kActionButtonColor,
+                    size: 24,
+                  ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.grey, width: 1),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8)));
+  }
+
+  _getValueField() {
+    return TextField(
+        style: kData,
+        controller: _valueController,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.grey, width: 1),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8)));
   }
 }

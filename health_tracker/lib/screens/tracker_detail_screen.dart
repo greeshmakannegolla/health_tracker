@@ -40,29 +40,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
       },
       child: SafeArea(
         child: Scaffold(
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: FloatingActionButton(
-                elevation: 0,
-                onPressed: () async {
-                  await _analytics
-                      .logEvent(name: 'add_from_detail', parameters: {
-                    'add_form': widget.mockTracker.id,
-                  });
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              AddEditForm(widget.mockTracker)));
-                },
-                backgroundColor: ColorConstants.kActionButtonColor,
-                child: const Icon(
-                  Icons.add_rounded,
-                  size: 40,
-                  color: ColorConstants.kAppBackgroundColor,
-                ),
-              ),
-            ),
+            floatingActionButton: _getFAB(context),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             backgroundColor: ColorConstants.kAppBackgroundColor,
@@ -87,29 +65,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                     height: 300,
                     padding: const EdgeInsets.all(10),
                     width: double.infinity,
-                    child: LineChart(LineChartData(
-                        borderData: FlBorderData(show: false),
-                        gridData: FlGridData(
-                            drawHorizontalLine: false, drawVerticalLine: false),
-                        lineBarsData: [
-                          LineChartBarData(spots: _getFlSpotList(_entries))
-                        ],
-                        titlesData: FlTitlesData(
-                            rightTitles: SideTitles(showTitles: false),
-                            topTitles: SideTitles(showTitles: false),
-                            bottomTitles: SideTitles(
-                                showTitles: true,
-                                getTitles: (value) {
-                                  DateTime date =
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          value.toInt());
-
-                                  var formattedDate =
-                                      DateFormat('MMM').format(date);
-                                  if (_prev == formattedDate) return '';
-                                  _prev = formattedDate;
-                                  return formattedDate;
-                                })))),
+                    child: _getChart(),
                   ),
                   const SizedBox(
                     height: 30,
@@ -127,6 +83,30 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 ],
               ),
             )),
+      ),
+    );
+  }
+
+  Widget _getFAB(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      child: FloatingActionButton(
+        elevation: 0,
+        onPressed: () async {
+          await _analytics.logEvent(name: 'add_from_detail', parameters: {
+            'add_form': widget.mockTracker.id,
+          });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddEditForm(widget.mockTracker)));
+        },
+        backgroundColor: ColorConstants.kActionButtonColor,
+        child: const Icon(
+          Icons.add_rounded,
+          size: 40,
+          color: ColorConstants.kAppBackgroundColor,
+        ),
       ),
     );
   }
@@ -166,7 +146,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
               if (states.contains(MaterialState.selected)) {
                 return Theme.of(context).colorScheme.primary.withOpacity(0.08);
               }
-              return null; // Use the default value.
+              return null;
             }),
             cells: [
               DataCell(Text(
@@ -205,7 +185,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
         .listen((event) {
       _entries = TrackerDataListModel.fromSnapshotList(event.docs);
       if (mounted) {
-        setState(() {});
+        setState(() {}); //TODO: Provider
       }
     });
   }
@@ -218,5 +198,27 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
     }
 
     return flSpotList;
+  }
+
+  _getChart() {
+    return LineChart(LineChartData(
+        borderData: FlBorderData(show: false),
+        gridData:
+            FlGridData(drawHorizontalLine: false, drawVerticalLine: false),
+        lineBarsData: [LineChartBarData(spots: _getFlSpotList(_entries))],
+        titlesData: FlTitlesData(
+            rightTitles: SideTitles(showTitles: false),
+            topTitles: SideTitles(showTitles: false),
+            bottomTitles: SideTitles(
+                showTitles: true,
+                getTitles: (value) {
+                  DateTime date =
+                      DateTime.fromMillisecondsSinceEpoch(value.toInt());
+
+                  var formattedDate = DateFormat('MMM').format(date);
+                  if (_prev == formattedDate) return '';
+                  _prev = formattedDate;
+                  return formattedDate;
+                }))));
   }
 }
