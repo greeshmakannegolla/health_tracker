@@ -31,7 +31,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
     return SafeArea(
       child: Scaffold(
           floatingActionButton: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: FloatingActionButton(
               elevation: 0,
               onPressed: () async {
@@ -51,6 +51,8 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
               ),
             ),
           ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           backgroundColor: ColorConstants.kAppBackgroundColor,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +62,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                   Navigator.pop(context);
                 },
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Icon(
                     Icons.arrow_back_ios_rounded,
                     color: ColorConstants.kTextPrimaryColor,
@@ -68,19 +70,21 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                 ),
               ),
               const SizedBox(
-                height: 360, //TODO: Show graph
+                height: 300, //TODO: Show graph
               ),
               const SizedBox(
                 height: 30,
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: _createDataTable()),
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  children: [_createDataTable()],
                 ),
-              )
+              ),
+              const SizedBox(
+                height: 30,
+              ),
             ],
           )),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/string_constants.dart';
 
 class MockTracker {
@@ -7,27 +6,27 @@ class MockTracker {
   String unit = '';
   String iconPath = '';
   String id = '';
-  Color color = ColorConstants.kActionButtonColor;
+  Color color = Colors.orange;
 }
 
 class MockTrackerList {
   static List<MockTracker> mockTrackers = [];
 
   static initialize() {
-    MockTracker bpTracker = MockTracker();
-    bpTracker.displayName = 'Blood Pressure';
-    bpTracker.iconPath = kBp;
-    bpTracker.id = 'bp_data';
-    bpTracker.unit = 'mm Hg';
-    bpTracker.color = ColorConstants.kBloodPressureColor;
-    mockTrackers.add(bpTracker);
+    MockTracker sleepTracker = MockTracker();
+    sleepTracker.displayName = 'Sleep';
+    sleepTracker.iconPath = kSleep;
+    sleepTracker.id = 'sleep';
+    sleepTracker.unit = 'hours';
+    sleepTracker.color = const Color(0xFFbf2158);
+    mockTrackers.add(sleepTracker);
 
     MockTracker weightTracker = MockTracker();
     weightTracker.displayName = 'Weight';
     weightTracker.iconPath = kWeight;
     weightTracker.id = 'weight';
     weightTracker.unit = 'kg';
-    weightTracker.color = ColorConstants.kWeightColor;
+    weightTracker.color = const Color(0xFF2c94d4);
     mockTrackers.add(weightTracker);
 
     MockTracker exerciseTracker = MockTracker();
@@ -35,7 +34,7 @@ class MockTrackerList {
     exerciseTracker.iconPath = kThunder;
     exerciseTracker.id = 'exercise';
     exerciseTracker.unit = 'min(s)';
-    exerciseTracker.color = ColorConstants.kExerciseColor;
+    exerciseTracker.color = const Color(0xFF30ab5b);
     mockTrackers.add(exerciseTracker);
   }
 }

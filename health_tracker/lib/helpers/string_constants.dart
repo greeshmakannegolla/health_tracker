@@ -1,7 +1,7 @@
 //images
 const String kWelcome = "images/welcome.jpeg";
 const String kWeight = "images/weight.png";
-const String kBp = "images/bp.png";
+const String kSleep = "images/sleep.png";
 const String kThunder = "images/thunder.png";
 
 //text

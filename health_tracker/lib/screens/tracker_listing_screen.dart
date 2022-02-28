@@ -44,22 +44,28 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
+                                borderRadius: BorderRadius.circular(25.0),
                               ),
                             ),
                             backgroundColor: MaterialStateProperty.all(
                                 ColorConstants.kActionButtonColor)),
-                        child: Text(
-                          '+ Link new tracker',
-                          style: kData.copyWith(
-                              color: ColorConstants.kAppBackgroundColor,
-                              fontWeight: FontWeight.w600),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          child: Text(
+                            '+ Link new tracker',
+                            style: kData.copyWith(
+                                color: ColorConstants.kAppBackgroundColor,
+                                fontWeight: FontWeight.w600),
+                          ),
                         ),
                         onPressed: () {
                           //To add a new tracker, implement
                         },
                       ),
                     ],
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   ListView.builder(
                     shrinkWrap: true,

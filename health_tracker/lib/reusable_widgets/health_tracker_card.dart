@@ -34,7 +34,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
         ),
         elevation: 0,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 35),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -66,7 +66,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                       height: 12,
                     ),
                     Text(
-                        "120/80 " + //TODO: Get latest entry
+                        "76 " + //TODO: Get latest entry
                             widget.mockTracker.unit,
                         style: kSubText.copyWith(
                             color: widget.mockTracker.color, fontSize: 35))
