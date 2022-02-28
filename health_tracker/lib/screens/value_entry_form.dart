@@ -4,11 +4,14 @@ import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/mock_data/mock_tracker_data.dart';
+import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:intl/intl.dart';
 
 class AddEditForm extends StatefulWidget {
   final MockTracker mockTracker;
-  const AddEditForm(this.mockTracker, {Key? key}) : super(key: key);
+  final TrackerDataModel? editModel;
+  const AddEditForm(this.mockTracker, {Key? key, this.editModel})
+      : super(key: key);
 
   @override
   _AddEditFormState createState() => _AddEditFormState();
@@ -18,15 +21,25 @@ class _AddEditFormState extends State<AddEditForm> {
   late TextEditingController _dateController;
   late DateTime _entryDate;
   late TextEditingController _valueController;
+  bool _isEdit = false;
+  TrackerDataModel? _trackerModel;
 
   @override
   void initState() {
     super.initState();
-    _entryDate = DateTime.now();
+    if (widget.editModel != null) {
+      _isEdit = true;
+      _trackerModel = widget.editModel;
+    } else {
+      _trackerModel = TrackerDataModel();
+    }
+
+    _entryDate = _isEdit ? _trackerModel!.date : DateTime.now();
     _dateController = TextEditingController(
         text: DateFormat(' d MMM, ' 'yy')
-            .format(DateTime.now())); //TODO: Needs to change for edit
-    _valueController = TextEditingController();
+            .format(_isEdit ? _trackerModel!.date : DateTime.now()));
+    _valueController =
+        TextEditingController(text: _isEdit ? _trackerModel!.value : '');
   }
 
   @override
@@ -75,49 +88,62 @@ class _AddEditFormState extends State<AddEditForm> {
                   TextField(
                       style: kData,
                       controller: _dateController,
+                      readOnly: _isEdit ? true : false,
                       onTap: () async {
-                        DateTime today = DateTime.now();
-                        FocusScope.of(context).unfocus();
-                        await Future.delayed(const Duration(milliseconds: 100));
-                        var date = await showRoundedDatePicker(
-                          height: 300,
-                          context: context,
-                          initialDate: _entryDate,
-                          firstDate:
-                              today.subtract(const Duration(days: 365 * 5)),
-                          lastDate: today.add(const Duration(days: 365 * 3)),
-                          borderRadius: 16,
-                          styleDatePicker: MaterialRoundedDatePickerStyle(
-                              paddingMonthHeader: const EdgeInsets.all(12),
-                              textStyleMonthYearHeader: TextStyle(
-                                  fontFamily: "Sen",
-                                  fontSize: 15,
-                                  color: ColorConstants.kTextPrimaryColor
-                                      .withOpacity(0.8))),
-                          theme: ThemeData(
-                            primarySwatch: Colors.orange,
-                            // ignore: deprecated_member_use
-                            accentColor: ColorConstants.kActionButtonColor,
-                          ),
-                        );
-                        if (date == null) {
-                          return;
+                        if (_isEdit == false) {
+                          DateTime today = DateTime.now();
+                          FocusScope.of(context).unfocus();
+                          await Future.delayed(
+                              const Duration(milliseconds: 100));
+                          var date = await showRoundedDatePicker(
+                            height: 300,
+                            context: context,
+                            initialDate: _entryDate,
+                            firstDate:
+                                today.subtract(const Duration(days: 365 * 5)),
+                            lastDate: today.add(const Duration(days: 365 * 3)),
+                            borderRadius: 16,
+                            styleDatePicker: MaterialRoundedDatePickerStyle(
+                                paddingMonthHeader: const EdgeInsets.all(12),
+                                textStyleMonthYearHeader: TextStyle(
+                                    fontFamily: "Sen",
+                                    fontSize: 15,
+                                    color: ColorConstants.kTextPrimaryColor
+                                        .withOpacity(0.8))),
+                            theme: ThemeData(
+                              primarySwatch: Colors.orange,
+                              // ignore: deprecated_member_use
+                              accentColor: ColorConstants.kActionButtonColor,
+                            ),
+                          );
+                          if (date == null) {
+                            return;
+                          }
+
+                          _entryDate = date;
+                          var local = _entryDate.toLocal();
+
+                          _dateController.text =
+                              DateFormat(' d MMM, ' 'yy').format(local);
+
+                          setState(() {});
+                        } else {
+                          null;
                         }
-
-                        _entryDate = date;
-                        var local = _entryDate.toLocal();
-
-                        _dateController.text =
-                            DateFormat(' d MMM, ' 'yy').format(local);
-
-                        setState(() {});
                       },
                       decoration: InputDecoration(
-                          suffixIcon: const Icon(
-                            Icons.calendar_today_outlined,
-                            color: ColorConstants.kActionButtonColor,
-                            size: 18,
-                          ),
+                          filled: _isEdit ? true : false,
+                          fillColor: _isEdit
+                              ? ColorConstants.kSecondaryTextColor
+                                  .withOpacity(0.15)
+                              : ColorConstants.kAppBackgroundColor,
+                          suffixIcon: _isEdit
+                              ? null
+                              : const Icon(
+                                  Icons.calendar_today_rounded,
+                                  color: ColorConstants.kActionButtonColor,
+                                  size: 24,
+                                ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide:
@@ -174,7 +200,7 @@ class _AddEditFormState extends State<AddEditForm> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 3),
             child: Text(
-              "ADD",
+              _isEdit ? "SAVE" : "ADD",
               style: kSubHeader.copyWith(
                   color: ColorConstants.kAppBackgroundColor),
             ),
@@ -185,10 +211,15 @@ class _AddEditFormState extends State<AddEditForm> {
               "value": _valueController.text
             };
 
-            await FirebaseFirestore.instance
-                .collection(widget.mockTracker.id)
-                .doc()
-                .set(currentData);
+            _isEdit
+                ? await FirebaseFirestore.instance
+                    .collection(widget.mockTracker.id)
+                    .doc(_trackerModel!.id)
+                    .update(currentData)
+                : await FirebaseFirestore.instance
+                    .collection(widget.mockTracker.id)
+                    .doc()
+                    .set(currentData);
             Navigator.pop(context);
           },
         ),

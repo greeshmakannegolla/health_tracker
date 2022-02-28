@@ -30,115 +30,112 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   TrackerDataListModel _entries = TrackerDataListModel();
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: FloatingActionButton(
-              elevation: 0,
-              onPressed: () async {
-                await _analytics.logEvent(name: 'add_from_detail', parameters: {
-                  'add_form': widget.mockTracker.id,
-                });
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddEditForm(widget.mockTracker)));
-              },
-              backgroundColor: ColorConstants.kActionButtonColor,
-              child: const Icon(
-                Icons.add_rounded,
-                size: 40,
-                color: ColorConstants.kAppBackgroundColor,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              child: FloatingActionButton(
+                elevation: 0,
+                onPressed: () async {
+                  await _analytics
+                      .logEvent(name: 'add_from_detail', parameters: {
+                    'add_form': widget.mockTracker.id,
+                  });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AddEditForm(widget.mockTracker)));
+                },
+                backgroundColor: ColorConstants.kActionButtonColor,
+                child: const Icon(
+                  Icons.add_rounded,
+                  size: 40,
+                  color: ColorConstants.kAppBackgroundColor,
+                ),
               ),
             ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          backgroundColor: ColorConstants.kAppBackgroundColor,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 30),
-                    child: Icon(
-                      Icons.arrow_back_ios_rounded,
-                      color: ColorConstants.kTextPrimaryColor,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            backgroundColor: ColorConstants.kAppBackgroundColor,
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: ColorConstants.kTextPrimaryColor,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  height: 300,
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  child: LineChart(LineChartData(
-                      borderData: FlBorderData(show: false),
-                      gridData: FlGridData(
-                          drawHorizontalLine: false, drawVerticalLine: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                            spots:
-                                //[
-                                // FlSpot(
-                                //     DateTime(2017, 9, 7)
-                                //         .millisecondsSinceEpoch
-                                //         .toDouble(),
-                                //     1),
-                                // FlSpot(
-                                //     DateTime(2017, 10, 7)
-                                //         .millisecondsSinceEpoch
-                                //         .toDouble(),
-                                //     100),
-                                // FlSpot(
+                  Container(
+                    height: 300,
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    child: LineChart(LineChartData(
+                        borderData: FlBorderData(show: false),
+                        gridData: FlGridData(
+                            drawHorizontalLine: false, drawVerticalLine: false),
+                        lineBarsData: [
+                          LineChartBarData(spots: _getFlSpotList(_entries))
+                        ],
+                        titlesData: FlTitlesData(
+                            rightTitles: SideTitles(showTitles: false),
+                            topTitles: SideTitles(showTitles: false),
+                            bottomTitles: SideTitles(
+                                showTitles: true,
+                                getTitles: (value) {
+                                  DateTime date =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          value.toInt());
 
-                                //     10),
-                                // ]
-                                _getFlSpotList(_entries))
-                      ],
-                      titlesData: FlTitlesData(
-                          rightTitles: SideTitles(showTitles: false),
-                          topTitles: SideTitles(showTitles: false),
-                          bottomTitles: SideTitles(
-                              showTitles: true,
-                              getTitles: (value) {
-                                DateTime date =
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        value.toInt());
-
-                                var formattedDate =
-                                    DateFormat('MMM').format(date);
-                                if (_prev == formattedDate) return '';
-                                _prev = formattedDate;
-                                return formattedDate;
-                              })))),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Expanded(
-                  child: ListView(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    children: [_createDataTable()],
+                                  var formattedDate =
+                                      DateFormat('MMM').format(date);
+                                  if (_prev == formattedDate) return '';
+                                  _prev = formattedDate;
+                                  return formattedDate;
+                                })))),
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-              ],
-            ),
-          )),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      children: [_createDataTable()],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
   DataTable _createDataTable() {
-    return DataTable(columns: _createColumns(), rows: _createRows(_entries));
+    return DataTable(
+        columns: _createColumns(),
+        rows: _createRows(_entries),
+        showCheckboxColumn: false);
   }
 
   List<DataColumn> _createColumns() {
@@ -163,7 +160,15 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
 
   List<DataRow> _createRows(TrackerDataListModel entries) {
     return entries.trackerDataList
-        .map((entry) => DataRow(cells: [
+        .map((entry) => DataRow(
+            color: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              }
+              return null; // Use the default value.
+            }),
+            cells: [
               DataCell(Text(
                 DateFormat("dd MMM, yyyy").format(entry.date),
                 textAlign: TextAlign.center,
@@ -178,7 +183,17 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                     ),
                   ),
                   showEditIcon: true),
-            ]))
+            ],
+            onSelectChanged: (bool? selected) {
+              if (selected == null) {
+                return;
+              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AddEditForm(widget.mockTracker, editModel: entry)));
+            }))
         .toList();
   }
 
