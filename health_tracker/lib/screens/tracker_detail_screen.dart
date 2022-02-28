@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
@@ -19,6 +20,7 @@ class TrackerDetailScreen extends StatefulWidget {
 
 class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  String _prev = '';
   @override
   void initState() {
     super.initState();
@@ -54,38 +56,83 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           backgroundColor: ColorConstants.kAppBackgroundColor,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: ColorConstants.kTextPrimaryColor,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 30),
+                    child: Icon(
+                      Icons.arrow_back_ios_rounded,
+                      color: ColorConstants.kTextPrimaryColor,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 300, //TODO: Show graph
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  children: [_createDataTable()],
+                Container(
+                  height: 300,
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  child: LineChart(LineChartData(
+                      borderData: FlBorderData(show: false),
+                      gridData: FlGridData(
+                          drawHorizontalLine: false, drawVerticalLine: false),
+                      lineBarsData: [
+                        LineChartBarData(
+                            spots:
+                                //[
+                                // FlSpot(
+                                //     DateTime(2017, 9, 7)
+                                //         .millisecondsSinceEpoch
+                                //         .toDouble(),
+                                //     1),
+                                // FlSpot(
+                                //     DateTime(2017, 10, 7)
+                                //         .millisecondsSinceEpoch
+                                //         .toDouble(),
+                                //     100),
+                                // FlSpot(
+
+                                //     10),
+                                // ]
+                                _getFlSpotList(_entries))
+                      ],
+                      titlesData: FlTitlesData(
+                          rightTitles: SideTitles(showTitles: false),
+                          topTitles: SideTitles(showTitles: false),
+                          bottomTitles: SideTitles(
+                              showTitles: true,
+                              getTitles: (value) {
+                                DateTime date =
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        value.toInt());
+
+                                var formattedDate =
+                                    DateFormat('MMM').format(date);
+                                if (_prev == formattedDate) return '';
+                                _prev = formattedDate;
+                                return formattedDate;
+                              })))),
                 ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-            ],
+                const SizedBox(
+                  height: 30,
+                ),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [_createDataTable()],
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
           )),
     );
   }
@@ -105,7 +152,6 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
           label: Expanded(
         child: Text(
           widget.mockTracker.displayName +
-              // \n //TODO:Check
               " (in " +
               widget.mockTracker.unit +
               ")",
@@ -121,8 +167,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
               DataCell(Text(
                 DateFormat("dd MMM, yyyy").format(entry.date),
                 textAlign: TextAlign.center,
-                style: kSubHeader.copyWith(
-                    fontWeight: FontWeight.w400), //TODO: Check UI in BP
+                style: kSubHeader.copyWith(fontWeight: FontWeight.w400),
               )),
               DataCell(
                   Text(
@@ -140,6 +185,7 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   Future<void> listenToData() async {
     FirebaseFirestore.instance
         .collection(widget.mockTracker.id)
+        .orderBy("date", descending: true)
         .snapshots()
         .listen((event) {
       _entries = TrackerDataListModel.fromSnapshotList(event.docs);
@@ -147,5 +193,15 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
         setState(() {});
       }
     });
+  }
+
+  List<FlSpot> _getFlSpotList(TrackerDataListModel entries) {
+    List<FlSpot> flSpotList = [];
+    for (var element in entries.trackerDataList) {
+      flSpotList.add(FlSpot(element.date.millisecondsSinceEpoch.toDouble(),
+          double.parse(element.value)));
+    }
+
+    return flSpotList;
   }
 }
