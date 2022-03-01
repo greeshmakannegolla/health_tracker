@@ -129,7 +129,8 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
           label: Expanded(
         child: Text(
           widget.mockTracker.displayName +
-              " (in " +
+              "(" +
+              // " (in " +
               widget.mockTracker.unit +
               ")",
           style: kSubHeader.copyWith(fontSize: 20),
