@@ -2,8 +2,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/mock_data/mock_tracker_data.dart';
+import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/screens/tracker_detail_screen.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
+import 'package:provider/provider.dart';
+
+import '../helpers/db_helper.dart';
 
 class HealthTrackerCard extends StatefulWidget {
   final MockTracker mockTracker;
@@ -22,10 +26,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
         await _analytics.logEvent(name: 'tracker_detail', parameters: {
           'view_card': widget.mockTracker.id,
         });
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TrackerDetailScreen(widget.mockTracker)));
+        _goToDetails(context);
       },
       child: Card(
         color: widget.mockTracker.color.withOpacity(0.1),
@@ -65,9 +66,7 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
                     const SizedBox(
                       height: 12,
                     ),
-                    Text(
-                        "76 " + //TODO: Get latest entry Provider
-                            widget.mockTracker.unit,
+                    Text(_getLatestValue() + ' ' + widget.mockTracker.unit,
                         style: kSubText.copyWith(
                             color: widget.mockTracker.color, fontSize: 35))
                   ],
@@ -99,5 +98,22 @@ class _HealthTrackerCardState extends State<HealthTrackerCard> {
         ),
       ),
     );
+  }
+
+  void _goToDetails(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return StreamProvider<TrackerDataListModel>.value(
+          initialData: TrackerDataListModel(),
+          value: getTrackerDataStream(widget.mockTracker.id),
+          child: TrackerDetailScreen(widget.mockTracker));
+    }));
+  }
+
+  String _getLatestValue() {
+    var entries = context.watch<TrackerDataListModel>();
+    if (entries.trackerDataList.isNotEmpty) {
+      return entries.trackerDataList[0].value;
+    }
+    return '...';
   }
 }

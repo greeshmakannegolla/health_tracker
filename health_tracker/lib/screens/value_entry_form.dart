@@ -144,6 +144,7 @@ class _AddEditFormState extends State<AddEditForm> {
 
       _dateController.text = DateFormat(' d MMM, ' 'yy').format(local);
 
+      //Can be optimized by making the textfield and calendar icon into a seperate widget.
       setState(() {});
     }
   }

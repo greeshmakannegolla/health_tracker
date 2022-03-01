@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:health_tracker/mock_data/mock_tracker_data.dart';
 import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/screens/value_entry_form.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TrackerDetailScreen extends StatefulWidget {
   final MockTracker mockTracker;
@@ -24,12 +24,12 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
   @override
   void initState() {
     super.initState();
-    listenToData();
   }
 
   TrackerDataListModel _entries = TrackerDataListModel();
   @override
   Widget build(BuildContext context) {
+    _entries = context.watch<TrackerDataListModel>();
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -176,19 +176,6 @@ class _TrackerDetailScreenState extends State<TrackerDetailScreen> {
                           AddEditForm(widget.mockTracker, editModel: entry)));
             }))
         .toList();
-  }
-
-  Future<void> listenToData() async {
-    FirebaseFirestore.instance
-        .collection(widget.mockTracker.id)
-        .orderBy("date", descending: true)
-        .snapshots()
-        .listen((event) {
-      _entries = TrackerDataListModel.fromSnapshotList(event.docs);
-      if (mounted) {
-        setState(() {}); //TODO: Provider
-      }
-    });
   }
 
   List<FlSpot> _getFlSpotList(TrackerDataListModel entries) {

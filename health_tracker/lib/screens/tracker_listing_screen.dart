@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:health_tracker/helpers/color_constants.dart';
+import 'package:health_tracker/helpers/db_helper.dart';
+import 'package:health_tracker/helpers/helper_functions.dart';
 import 'package:health_tracker/helpers/string_constants.dart';
 import 'package:health_tracker/helpers/style_constants.dart';
 import 'package:health_tracker/mock_data/mock_tracker_data.dart';
+import 'package:health_tracker/models/tracker_detail_model.dart';
 import 'package:health_tracker/reusable_widgets/health_tracker_card.dart';
+import 'package:provider/provider.dart';
 
 class TrackerListingScreen extends StatefulWidget {
   const TrackerListingScreen({Key? key}) : super(key: key);
@@ -60,6 +64,7 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                         ),
                         onPressed: () {
                           //To add a new tracker, implement
+                          showAlertDialog(context);
                         },
                       ),
                     ],
@@ -75,9 +80,7 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 12),
-                        child: HealthTrackerCard(
-                          MockTrackerList.mockTrackers[index],
-                        ),
+                        child: _getHealthTrackerCard(index),
                       );
                     },
                   ),
@@ -85,6 +88,16 @@ class _TrackerListingScreenState extends State<TrackerListingScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  Widget _getHealthTrackerCard(int index) {
+    return StreamProvider<TrackerDataListModel>.value(
+      initialData: TrackerDataListModel(),
+      value: getLatestTrackerDataEntry(MockTrackerList.mockTrackers[index].id),
+      child: HealthTrackerCard(
+        MockTrackerList.mockTrackers[index],
+      ),
     );
   }
 }
