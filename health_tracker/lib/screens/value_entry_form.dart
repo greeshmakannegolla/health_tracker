@@ -167,21 +167,23 @@ class _AddEditFormState extends State<AddEditForm> {
           style: kSubHeader.copyWith(color: ColorConstants.kAppBackgroundColor),
         ),
       ),
-      onPressed: () async {
-        _trackerModel.date = _entryDate;
-        _trackerModel.value = _valueController.text;
+      onPressed: (_valueController.text.isEmpty)
+          ? null
+          : () async {
+              _trackerModel.date = _entryDate;
+              _trackerModel.value = _valueController.text;
 
-        _isEdit
-            ? await FirebaseFirestore.instance
-                .collection(widget.mockTracker.id)
-                .doc(_trackerModel.id)
-                .update(_trackerModel.toJSON())
-            : await FirebaseFirestore.instance
-                .collection(widget.mockTracker.id)
-                .doc()
-                .set(_trackerModel.toJSON());
-        Navigator.pop(context);
-      },
+              _isEdit
+                  ? await FirebaseFirestore.instance
+                      .collection(widget.mockTracker.id)
+                      .doc(_trackerModel.id)
+                      .update(_trackerModel.toJSON())
+                  : await FirebaseFirestore.instance
+                      .collection(widget.mockTracker.id)
+                      .doc()
+                      .set(_trackerModel.toJSON());
+              Navigator.pop(context);
+            },
     );
   }
 
