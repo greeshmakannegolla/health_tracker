@@ -6,8 +6,11 @@ Firebase(Firestore, Firebase analytics)
 
 **Description:**
 
+
 Welcome screen:
-![welcome_screen](https://user-images.githubusercontent.com/66864613/166232895-27daf602-80c5-459f-b280-89cda9057c20.png)
+
+![welcome_screen](https://user-images.githubusercontent.com/66864613/166236203-75239cb3-17d1-4d82-92ef-75a8a872efee.png)
+
 
 Tracker listing screen:
  - Displays a list of health trackers, Weight(in Kgs), Sleep(in hours), Daily Exercise(in minutes)
